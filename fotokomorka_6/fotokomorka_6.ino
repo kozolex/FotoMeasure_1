@@ -34,12 +34,12 @@ void setup() {
   pinMode(button, INPUT_PULLUP);
   pinMode(sensor1, INPUT);
   pinMode(sensor2, INPUT);
-/*
-  lcd.begin();
-  lcd.backlight();
-  lcd.setCursor(2, 0);
-  lcd.print("FOTOKOMORKA v1.0");
-*/
+  /*
+    lcd.begin();
+    lcd.backlight();
+    lcd.setCursor(2, 0);
+    lcd.print("FOTOKOMORKA v1.0");
+  */
   menu();
   //startSeq(100);
   startSeq2(100);
@@ -88,39 +88,66 @@ void loop() {
     //obiekt mniejszy od odległości między sensorami
     if (sensor1Time < sensor2Time &&  sensor1TimeEnd < sensor2TimeEnd)
     {
-      Serial.print("Zawodnik nr: ");
-      Serial.print(licz);
-      Serial.print("\tCzas: ");
-      Serial.print(sensor1Time / 1000);
-      Serial.print("s ");
-      Serial.print(sensor1Time % 1000);
-      Serial.println("ms ");
-      Serial.print("Wielkosc: ");
-      Serial.print((sensorDistance / (sensor2Time - sensor1Time) * 1000) * (sensor1TimeEnd - sensor1Time) / 1000 );
-      Serial.print("m\t");
-      Serial.print("Szybkosc: ");
-      Serial.print((sensorDistance / (sensor2Time - sensor1Time) * 3600));
-      Serial.print("km/h");
-      Serial.println(""); Serial.println("");
-
-      lcd.setCursor(cursorX, cursorY);
-      cursorY++;
-      if (cursorY == 4)
+      if (typeMeasure == 1)
       {
-        cursorY = 0;
-        cursorX += 11;
-        if (cursorX > 11)
+        Serial.print("Zawodnik nr: ");
+        Serial.print(licz);
+        Serial.print("\tCzas: ");
+        Serial.print(sensor1Time / 1000);
+        Serial.print("s ");
+        Serial.print(sensor1Time % 1000);
+        Serial.println("ms ");
+        Serial.print("Wielkosc: ");
+        Serial.print((sensorDistance / (sensor2Time - sensor1Time) * 1000) * (sensor1TimeEnd - sensor1Time) / 1000 );
+        Serial.print("m\t");
+        Serial.print("Szybkosc: ");
+        Serial.print((sensorDistance / (sensor2Time - sensor1Time) * 3600));
+        Serial.print("km/h");
+        Serial.println(""); Serial.println("");
+
+        lcd.setCursor(cursorX, cursorY);
+        cursorY++;
+        if (cursorY == 4)
         {
-          cursorX = 0;
           cursorY = 0;
+          cursorX += 11;
+          if (cursorX > 11)
+          {
+            cursorX = 0;
+            cursorY = 0;
+          }
         }
+        lcd.print(licz);
+        lcd.print(" ");
+        lcd.print(sensor1Time / 1000);
+        lcd.print(",");
+        lcd.print(sensor1Time % 1000);
+        //lcd.print("s");
+
       }
-      lcd.print(licz);
-      lcd.print(" ");
-      lcd.print(sensor1Time / 1000);
-      lcd.print(",");
-      lcd.print(sensor1Time % 1000);
-      //lcd.print("s");
+      else 
+      {
+        lcd.setCursor(cursorX, cursorY);
+        cursorY++;
+        if (cursorY == 4)
+        {
+          cursorY = 0;
+          cursorX += 11;
+          if (cursorX > 11)
+          {
+            cursorX = 0;
+            cursorY = 0;
+          }
+        }
+        lcd.print(licz);
+        lcd.print(" ");
+        lcd.print(sensor1Time / 1000);
+        lcd.print(",");
+        lcd.print(sensor1Time % 1000);
+        digitalWrite(buzzer, 1);
+        delay(2000);
+        digitalWrite(buzzer, 0);
+      }
     }
   }
   lcd.setCursor(cursorX, cursorY);
@@ -133,6 +160,75 @@ void loop() {
 
   pixels.show();
 }
+
+//############# MENU ###############
+void menu()
+{
+  lcd.begin();
+  lcd.print("        MENU        ");
+  lcd.setCursor(0, 1);
+  lcd.print("Sens dist:");
+  lcd.print(sensorDistance * 100);
+  lcd.print(" cm");
+  // Wybor odleglosci
+  startTime = (millis());
+  while (1)
+  {
+    lcd.setCursor(0, 0);
+    lcd.print(4 - ((millis() - startTime) / 1000));
+
+    if (digitalRead(button) == 0)
+    {
+      digitalWrite(buzzer, 1);
+      lcd.setCursor(10, 1);
+      lcd.print(sensorDistance * 100);
+      lcd.print(" cm");
+      sensorDistance += 0.1;
+      delay(200);
+      digitalWrite(buzzer, 0);
+    }
+    if (sensorDistance == 0.5) sensorDistance = 0.1;
+    if (millis() - startTime > 5000)
+    {
+      break;
+    }
+
+  }
+  lcd.setCursor(0, 0);
+  lcd.print("        MENU        ");
+  lcd.setCursor(0, 1);
+  lcd.print("Sens dist:");
+  lcd.print(sensorDistance * 100);
+  lcd.print(" cm");
+  lcd.setCursor(0, 2);
+  lcd.print("wah    0 <-> 1  bieg");
+  lcd.setCursor(0, 3);
+  lcd.print("Wybrany:");
+  lcd.print(typeMeasure); //cursor 8,3
+
+  startTime = millis();
+  while (1)
+  {
+    if (digitalRead(button) == 0)
+    {
+      typeMeasure = !typeMeasure;
+      digitalWrite(buzzer, 1);
+      lcd.setCursor(8, 3);
+      lcd.print(typeMeasure);
+      delay(200);
+      digitalWrite(buzzer, 0);
+    }
+    if (millis() - startTime > 5000)
+    {
+      lcd.begin();
+      break;
+    }
+    lcd.setCursor(0, 0);
+    lcd.print(4 - ((millis() - startTime) / 1000));
+  }
+}
+
+
 //############# START ###############
 void startSeq(int delayTime)
 {
@@ -183,59 +279,4 @@ void startSeq2(byte timeDelay)
       break;
     }
 }
-//############# MENU ###############
-void menu()
-{
-  lcd.begin();
-  lcd.print("        MENU        ");
-  lcd.setCursor(0, 1);
-  lcd.print("Sens dist:");
-  lcd.print(sensorDistance * 100);
-  lcd.print(" cm");
-  // Wybor odleglosci
-  startTime = (millis());
-  while (1)
-  {
-    if (digitalRead(button) == 0)
-    {
-      digitalWrite(buzzer, 1);
-      lcd.setCursor(10, 1);
-      lcd.print(sensorDistance * 100);
-      lcd.print(" cm");
-      sensorDistance += 0.1;
-      delay(200);
-      digitalWrite(buzzer, 0);
-    }
-    if (sensorDistance == 0.5) sensorDistance = 0.1;
-    if (millis() - startTime > 5000)
-    {
-      lcd.begin();
-      break;
-    }
-    lcd.setCursor(0, 0);
-    lcd.print(4 - ((millis() - startTime) / 1000));
-  }
-  while (1)
-  {
-    if (digitalRead(button) == 0)
-    {
-      digitalWrite(buzzer, 1);
-      lcd.setCursor(10, 1);
-      lcd.print(sensorDistance * 100);
-      lcd.print(" cm");
-      sensorDistance += 0.1;
-      delay(200);
-      digitalWrite(buzzer, 0);
-    }
-    if (sensorDistance == 0.5) sensorDistance = 0.1;
-    if (millis() - startTime > 5000)
-    {
-      lcd.begin();
-      break;
-    }
-    lcd.setCursor(0, 0);
-    lcd.print(4 - ((millis() - startTime) / 1000));
-  }
-}
-
 
