@@ -9,6 +9,7 @@ void buz_pip(int time)
 
 void setDevice()
 {
+  
   lcd.print("Fotokomorka ver.1");
   lcd.setCursor(0,1);
   lcd.print("Ustaw i wcisnij OK!");
@@ -41,11 +42,11 @@ int setMode()
   lcd.setCursor(0,0);
   lcd.print(" TRYB  1 / 2 / 3   ");
   lcd.setCursor(0,1);
-  lcd.print("1 - BIEG 1os    ");
+  lcd.print("1 BIEG 1os    ");
   lcd.setCursor(0,2);
-  lcd.print("2 - BIEG wiele osob  ");
+  lcd.print("2 BIEG wiele osob  ");
   lcd.setCursor(0,3);
-  lcd.print("3 - INTERWAL         ");
+  lcd.print("3 INTERWAL         ");
   buz_pip(100);
   while(1)
   {
@@ -55,7 +56,7 @@ int setMode()
       lcd.begin();
       lcd.setCursor(0,0);
       lcd.print("INTERWAL         ");
-      delayTime = 1000;
+      delayTime = 1500;
       return 3; 
       break;
     }
@@ -64,7 +65,7 @@ int setMode()
       lcd.begin();
       lcd.setCursor(0,0);
       lcd.print("BIEG wiele os        ");
-      delayTime = 50;
+      delayTime = 75;
       return 2; 
       break;
     }

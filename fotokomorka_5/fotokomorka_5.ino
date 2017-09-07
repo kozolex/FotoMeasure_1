@@ -46,9 +46,18 @@ void setup() {
   lcd.begin();
   lcd.backlight();
   
-  //URUCHOMIENIE URZADZENIA - zabezpieczenie
+
+
+}
+
+void loop() {
+
+    //URUCHOMIENIE URZADZENIA - zabezpieczenie
   setDevice();//Menu
   mode = setMode();
+  pixels.setPixelColor(0, pixels.Color(0, 0, 0));
+  pixels.show();
+  
   lcd.setCursor(0,1);
   lcd.print("Wcisnij OK   ");
   while(digitalRead(buttonEnter)){}
@@ -64,104 +73,107 @@ void setup() {
   lcd.print("                       ");
   lcd.setCursor(0,1);
   lcd.print("                       ");
-}
-
-void loop() {
-  //SENSOR 1
-  if (digitalRead(sensor1) == 1 && sensor1Active == 0 && onePerson == 0)
-  {
-    sensor1Time = millis() - startTime;
-    onePerson = 1;
-    sensor1Active = 1;
-    pixels.setPixelColor(0, pixels.Color(255, 255, 255));
-    pixels.show();
-    licz++;
-    Serial.print ("S1 = "); Serial.println (sensor1Time);
-  }
-  else if (digitalRead(sensor1) == 0 && sensor1Active == 1 && onePerson == 1)
-  {
-    sensor1TimeEnd = millis() - startTime;
-    sensor1Active = 0;
-    Serial.print ("S1E= "); Serial.println (sensor1TimeEnd);
-  }
-  //SENSOR 2
-
-  if (digitalRead(sensor2) == 1 && onePerson == 1 && sensor2Active == 0)
-  {
-
-    sensor2Time = millis() - startTime;
-    sensor2Active = 1;
-    Serial.print ("S2 = "); Serial.println (sensor2Time);
-  }
-  else if (digitalRead(sensor2) == 0 && onePerson == 1 && sensor1Active == 0 && sensor2Active == 1)
-  {
-    sensor2TimeEnd = millis() - startTime;
-    Serial.print ("S2E= "); Serial.println (sensor2TimeEnd);
-    onePerson = 0;
-    sensor2Active = 0;
-    pixels.setPixelColor(0, pixels.Color(0, 0, 0));
-    pixels.show();
-
-    //Decyzja
-    //obiekt mniejszy od odległości między sensorami
-    if (sensor1Time < sensor2Time &&  sensor1TimeEnd < sensor2TimeEnd)
-    {
+  
+  
+   while(digitalRead(buttonR))//blad w nazwie buttona
+   {
       
-      /* SERIAL _ DANE
-      Serial.print("Zawodnik nr: ");
-      Serial.print(licz);
-      Serial.print("\tCzas: ");
-      Serial.print(sensor1Time / 1000);
-      Serial.print("s ");
-      Serial.print(sensor1Time % 1000);
-      Serial.println("ms ");
-      Serial.print("Wielkosc: ");
-      Serial.print((sensorDistance / (sensor2Time - sensor1Time) * 1000) * (sensor1TimeEnd - sensor1Time) / 1000 );
-      Serial.print("m\t");
-      Serial.print("Szybkosc: ");
-      Serial.print((sensorDistance / (sensor2Time - sensor1Time) * 3600));
-      Serial.print("km/h");
-      Serial.println(""); Serial.println("");
-*/
-      lcd.setCursor(cursorX, cursorY);
-      cursorY++;
-      if (cursorY == 4) 
+     //SENSOR 1   
+      if (digitalRead(sensor1) == 1 && sensor1Active == 0 && onePerson == 0)
       {
-        cursorY = 0;
-        cursorX += 11;
-        if (cursorX > 11)
+        sensor1Time = millis() - startTime;
+        onePerson = 1;
+        sensor1Active = 1;
+        pixels.setPixelColor(0, pixels.Color(255, 255, 255));
+        pixels.show();
+        licz++;
+        Serial.print ("S1 = "); Serial.println (sensor1Time);
+      }
+      else if (digitalRead(sensor1) == 0 && sensor1Active == 1 && onePerson == 1)
+      {
+        sensor1TimeEnd = millis() - startTime;
+        sensor1Active = 0;
+        Serial.print ("S1E= "); Serial.println (sensor1TimeEnd);
+      }
+      //SENSOR 2
+    
+      if (digitalRead(sensor2) == 1 && onePerson == 1 && sensor2Active == 0)
+      {
+    
+        sensor2Time = millis() - startTime;
+        sensor2Active = 1;
+        Serial.print ("S2 = "); Serial.println (sensor2Time);
+      }
+      else if (digitalRead(sensor2) == 0 && onePerson == 1 && sensor1Active == 0 && sensor2Active == 1)
+      {
+        sensor2TimeEnd = millis() - startTime;
+        Serial.print ("S2E= "); Serial.println (sensor2TimeEnd);
+        onePerson = 0;
+        sensor2Active = 0;
+        pixels.setPixelColor(0, pixels.Color(0, 0, 0));
+        pixels.show();
+    
+        //Decyzja
+        //obiekt mniejszy od odległości między sensorami
+        if (sensor1Time < sensor2Time &&  sensor1TimeEnd < sensor2TimeEnd)
         {
-          cursorX = 0;
-          cursorY = 0;
+          
+          /* SERIAL _ DANE
+          Serial.print("Zawodnik nr: ");
+          Serial.print(licz);
+          Serial.print("\tCzas: ");
+          Serial.print(sensor1Time / 1000);
+          Serial.print("s ");
+          Serial.print(sensor1Time % 1000);
+          Serial.println("ms ");
+          Serial.print("Wielkosc: ");
+          Serial.print((sensorDistance / (sensor2Time - sensor1Time) * 1000) * (sensor1TimeEnd - sensor1Time) / 1000 );
+          Serial.print("m\t");
+          Serial.print("Szybkosc: ");
+          Serial.print((sensorDistance / (sensor2Time - sensor1Time) * 3600));
+          Serial.print("km/h");
+          Serial.println(""); Serial.println("");
+    */
+          lcd.setCursor(cursorX, cursorY);
+          cursorY++;
+          if (cursorY == 4) 
+          {
+            cursorY = 0;
+            cursorX += 11;
+            if (cursorX > 11)
+            {
+              cursorX = 0;
+              cursorY = 0;
+            }
+          }
+          lcd.print(licz);
+          lcd.print(" ");
+          lcd.print(sensor1Time / 1000);
+          lcd.print(",");
+          lcd.print(sensor1Time % 1000);  
+          //lcd.print("s");    
+          switch(mode)
+          {
+           case 1:
+              startTime  = millis();
+              break;
+           case 2:
+             
+              break;
+           case 3:
+             
+              break;
+          }
+          buz_pip(delayTime);
         }
       }
-      lcd.print(licz);
-      lcd.print(" ");
-      lcd.print(sensor1Time / 1000);
-      lcd.print(",");
-      lcd.print(sensor1Time % 1000);  
-      //lcd.print("s");    
-      switch(mode)
-      {
-       case 1:
-          startTime  = millis();
-          break;
-       case 2:
-         
-          break;
-       case 3:
-         
-          break;
-      }
-      buz_pip(delayTime);
+      pixels.show();
+    
+    
+    
+    
+    
     }
-  }
-  pixels.show();
-
-
-
-
-
 }
 /*
 
