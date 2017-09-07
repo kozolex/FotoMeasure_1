@@ -9,7 +9,7 @@ void buz_pip(int time)
 
 void setDevice()
 {
-  
+  lcd.setCursor(0,0);
   lcd.print("Fotokomorka ver.1");
   lcd.setCursor(0,1);
   lcd.print("Ustaw i wcisnij OK!");

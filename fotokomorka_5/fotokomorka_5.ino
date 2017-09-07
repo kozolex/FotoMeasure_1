@@ -61,7 +61,7 @@ void loop() {
   lcd.setCursor(0,1);
   lcd.print("Wcisnij OK   ");
   while(digitalRead(buttonEnter)){}
-  lcd.setCursor(0,1);
+  lcd.setCursor(0,2);
   lcd.print("Start!       ");
   startTime  = millis(); 
   pixels.setPixelColor(0, pixels.Color(255, 255, 255));
@@ -69,10 +69,8 @@ void loop() {
   buz_pip(delayTime);
   pixels.setPixelColor(0, pixels.Color(0, 0, 0));
   pixels.show();
-  lcd.setCursor(0,0);
-  lcd.print("                       ");
-  lcd.setCursor(0,1);
-  lcd.print("                       ");
+  lcd.begin();
+  lcd.backlight();
   
   
    while(digitalRead(buttonR))//blad w nazwie buttona
