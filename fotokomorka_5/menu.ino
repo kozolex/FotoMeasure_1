@@ -13,6 +13,10 @@ void setDevice()
   lcd.print("Fotokomorka ver.1");
   lcd.setCursor(0,1);
   lcd.print("Ustaw i wcisnij OK!");
+    lcd.setCursor(0,2);
+  lcd.print("                   ");
+    lcd.setCursor(0,3);
+  lcd.print("                   ");
   do{
     
     pixels.setPixelColor(0, pixels.Color(0, 255, 0));  

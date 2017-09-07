@@ -51,8 +51,14 @@ void setup() {
 }
 
 void loop() {
-
-    //URUCHOMIENIE URZADZENIA - zabezpieczenie
+  licz = 0;
+  sensor1Active = 0, sensor2Active = 0;
+  sensor1Done = 0;
+  onePerson = 0;
+  cursorX = 0;
+  cursorY = 0;
+  mode = 0;
+  //URUCHOMIENIE URZADZENIA - zabezpieczenie
   setDevice();//Menu
   mode = setMode();
   pixels.setPixelColor(0, pixels.Color(0, 0, 0));
@@ -85,13 +91,13 @@ void loop() {
         pixels.setPixelColor(0, pixels.Color(255, 255, 255));
         pixels.show();
         licz++;
-        Serial.print ("S1 = "); Serial.println (sensor1Time);
+        //Serial.print ("S1 = "); Serial.println (sensor1Time);
       }
       else if (digitalRead(sensor1) == 0 && sensor1Active == 1 && onePerson == 1)
       {
         sensor1TimeEnd = millis() - startTime;
         sensor1Active = 0;
-        Serial.print ("S1E= "); Serial.println (sensor1TimeEnd);
+        //Serial.print ("S1E= "); Serial.println (sensor1TimeEnd);
       }
       //SENSOR 2
     
@@ -100,12 +106,12 @@ void loop() {
     
         sensor2Time = millis() - startTime;
         sensor2Active = 1;
-        Serial.print ("S2 = "); Serial.println (sensor2Time);
+        //Serial.print ("S2 = "); Serial.println (sensor2Time);
       }
       else if (digitalRead(sensor2) == 0 && onePerson == 1 && sensor1Active == 0 && sensor2Active == 1)
       {
         sensor2TimeEnd = millis() - startTime;
-        Serial.print ("S2E= "); Serial.println (sensor2TimeEnd);
+        //Serial.print ("S2E= "); Serial.println (sensor2TimeEnd);
         onePerson = 0;
         sensor2Active = 0;
         pixels.setPixelColor(0, pixels.Color(0, 0, 0));
