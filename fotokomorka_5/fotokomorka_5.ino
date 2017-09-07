@@ -2,6 +2,11 @@
   Program odmierza czas dla zawodników, wykorzystując fotocele
   Zasilanie 12 V stabilizowane
   2x Sensor optyczny WL170-P132
+  
+  //Start Sequence
+  //pixels.Color(B, R, G));
+  //digitalRead(sensor1) == 0 - brak odbicia
+  //digitalRead(buttonEnter)==1 - wcisniety przycisk
 */
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -11,9 +16,13 @@ LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 #define sensor1 9
 #define sensor2 10
+#define buttonL 5
+#define buttonR 4
+#define buttonEnter 3
+#define buzzer 11
 
 float sensorDistance = 0.2;  //Odległośc pomiędzy sensorami  
-int delayTime = 1000 ;
+int delayTime = 2000 ;
 unsigned long sensor1Time, sensor1TimeEnd;
 unsigned long sensor2Time, sensor2TimeEnd;
 unsigned long personTime, startTime;
@@ -23,37 +32,38 @@ byte sensor1Done = 0;
 bool onePerson = 0;
 byte cursorX = 0;
 byte cursorY = 0;
+int mode = 0;
 
 void setup() {
   Serial.begin(9600);
   pixels.begin();
   pinMode(sensor1, INPUT);
   pinMode(sensor2, INPUT);
-
+  pinMode(buttonEnter, INPUT_PULLUP);
+  pinMode(buttonL, INPUT_PULLUP);
+  pinMode(buttonR, INPUT_PULLUP);
+  pinMode(buzzer,OUTPUT);
   lcd.begin();
   lcd.backlight();
-  lcd.print("HI");
-
-  //Start Sequence
-  pixels.setPixelColor(0, pixels.Color(0, 255, 0));
-  pixels.show();
-  Serial.println("3");
-  delay(delayTime);
-  pixels.setPixelColor(0, pixels.Color(255, 0, 0));
-  pixels.show();
-  Serial.println("2");
-  delay(delayTime);
-  pixels.setPixelColor(0, pixels.Color(0, 0, 255));
-  pixels.show();
-  Serial.println("1");
-  delay(delayTime);
+  
+  //URUCHOMIENIE URZADZENIA - zabezpieczenie
+  setDevice();//Menu
+  mode = setMode();
+  lcd.setCursor(0,1);
+  lcd.print("Wcisnij OK   ");
+  while(digitalRead(buttonEnter)){}
+  lcd.setCursor(0,1);
+  lcd.print("Start!       ");
+  startTime  = millis(); 
   pixels.setPixelColor(0, pixels.Color(255, 255, 255));
   pixels.show();
-  delay(delayTime);
+  buz_pip(delayTime);
   pixels.setPixelColor(0, pixels.Color(0, 0, 0));
   pixels.show();
-  Serial.println("START");
-  startTime  = millis();
+  lcd.setCursor(0,0);
+  lcd.print("                       ");
+  lcd.setCursor(0,1);
+  lcd.print("                       ");
 }
 
 void loop() {
@@ -96,6 +106,8 @@ void loop() {
     //obiekt mniejszy od odległości między sensorami
     if (sensor1Time < sensor2Time &&  sensor1TimeEnd < sensor2TimeEnd)
     {
+      
+      /* SERIAL _ DANE
       Serial.print("Zawodnik nr: ");
       Serial.print(licz);
       Serial.print("\tCzas: ");
@@ -110,7 +122,7 @@ void loop() {
       Serial.print((sensorDistance / (sensor2Time - sensor1Time) * 3600));
       Serial.print("km/h");
       Serial.println(""); Serial.println("");
-
+*/
       lcd.setCursor(cursorX, cursorY);
       cursorY++;
       if (cursorY == 4) 
@@ -129,7 +141,19 @@ void loop() {
       lcd.print(",");
       lcd.print(sensor1Time % 1000);  
       //lcd.print("s");    
-      delay(2000);
+      switch(mode)
+      {
+       case 1:
+          startTime  = millis();
+          break;
+       case 2:
+         
+          break;
+       case 3:
+         
+          break;
+      }
+      buz_pip(delayTime);
     }
   }
   pixels.show();
